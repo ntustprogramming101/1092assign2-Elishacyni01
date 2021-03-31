@@ -26,8 +26,13 @@ final int BUTTON_BOTTOM = 420;
 final int BUTTON_LEFT = 248;
 final int BUTTON_RIGHT = 392;
 
+boolean downPressed = false;
+boolean leftPressed = false;
+boolean rightPressed = false;
+
 void setup() {
 	size(640, 480, P2D);
+  frameRate(60);
 
 	bg = loadImage("img/bg.jpg");
   gameover = loadImage("img/gameover.jpg");
@@ -83,6 +88,35 @@ void draw()
     
     case GAME_RUN:
   	  cabbageAppear = true;
+  
+      // Groundhog movement
+      if(downPressed){
+        if(groundhogY >= 400){
+          groundhogY = 400;
+        }else{
+          groundhogY += 80;
+          downPressed = false;
+        }
+      }
+      
+      if(leftPressed){
+        if(groundhogX <= 0){
+          groundhogX = 0;
+        }else{
+          groundhogX -= 80;
+          leftPressed = false;
+        }
+      }
+      
+      if(rightPressed){
+        if(groundhogX >= 560){
+          groundhogX = 560;
+        }else{
+          groundhogX += 80;
+          rightPressed = false;
+        }
+      }
+
       
       // Gamelife
       switch(gameLife)
@@ -208,36 +242,38 @@ void draw()
 
 void keyPressed()
 {
-  if (key == CODED) 
+  if (key == CODED)
   {
-    switch (keyCode)
+    switch(keyCode)
     {
       case DOWN:
-        if(groundhogY >= 400){
-          groundhogY = 400;
-        }else{
-          groundhogY += 80;
-        }
+        downPressed = true;
         break;
-        
       case LEFT:
-        if(groundhogX <= 0){
-          groundhogX = 0;
-        }else{
-          groundhogX -= 80;
-        }
+        leftPressed = true;
         break;
-        
       case RIGHT:
-        if(groundhogX >= 560){
-          groundhogX = 560;
-        }else{
-          groundhogX += 80;
-        }
+        rightPressed= true;
         break;
     }
   }
 }
 
-void keyReleased(){
+void keyReleased()
+{
+  if (key == CODED)
+  {
+    switch(keyCode)
+    {
+      case DOWN:
+        downPressed = false;
+        break;
+      case LEFT:
+        leftPressed = false;
+        break;
+      case RIGHT:
+        rightPressed= false;
+        break;
+    }
+  }
 }
