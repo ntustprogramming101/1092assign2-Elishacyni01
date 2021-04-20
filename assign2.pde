@@ -30,6 +30,12 @@ boolean downPressed = false;
 boolean leftPressed = false;
 boolean rightPressed = false;
 
+int down = 0;
+int right = 0;
+int left = 0;
+float actionFrame = 15;
+final float BLOCK_WIDTH = 80; 
+
 void setup() {
 	size(640, 480, P2D);
   frameRate(60);
@@ -89,33 +95,6 @@ void draw()
     case GAME_RUN:
   	  cabbageAppear = true;
   
-      // Groundhog movement
-      if(downPressed){
-        if(groundhogY >= 400){
-          groundhogY = 400;
-        }else{
-          groundhogY += 80;
-          downPressed = false;
-        }
-      }
-      
-      if(leftPressed){
-        if(groundhogX <= 0){
-          groundhogX = 0;
-        }else{
-          groundhogX -= 80;
-          leftPressed = false;
-        }
-      }
-      
-      if(rightPressed){
-        if(groundhogX >= 560){
-          groundhogX = 560;
-        }else{
-          groundhogX += 80;
-          rightPressed = false;
-        }
-      }
 
       
       // Gamelife
@@ -152,9 +131,49 @@ void draw()
       fill(253,184,19);
       ellipse(590,50,120,120);
       
-      // Groundhog
-      image(groundhogIdle, groundhogX, groundhogY);
-    	
+      // Groundhog movement
+      // DOWN
+      if(down > 0){
+        if(down == 1){
+          groundhogY = round(groundhogY + BLOCK_WIDTH/actionFrame);
+          image(groundhogIdle, groundhogX, groundhogY);
+        }else{
+          groundhogY = groundhogY + BLOCK_WIDTH/actionFrame;
+          image(groundhogDown, groundhogX, groundhogY);
+        }
+        down -= 1;
+      }
+      
+      // LEFT
+      if(left > 0){
+        if(left == 1){
+          groundhogX = round(groundhogX - BLOCK_WIDTH/actionFrame);
+          image(groundhogIdle, groundhogX, groundhogY);
+        }else{
+          groundhogX = groundhogX - BLOCK_WIDTH/actionFrame;
+          image(groundhogLeft, groundhogX, groundhogY);
+        }
+        left -= 1;
+      }
+      
+      // RIGHT
+      if(right > 0){
+        if(right == 1){
+          groundhogX = round(groundhogX + BLOCK_WIDTH/actionFrame);
+          image(groundhogIdle, groundhogX, groundhogY);
+        }else{
+          groundhogX = groundhogX + BLOCK_WIDTH/actionFrame;
+          image(groundhogRight, groundhogX, groundhogY);
+        }
+        right -= 1;
+      }
+      
+      // NO MOVE
+      if(down == 0 && left == 0 && right == 0){
+        image(groundhogIdle, groundhogX, groundhogY);
+      }
+
+      
       // Soldier
       // soldier random appear
       image(soldier, soldierX, soldierY);
@@ -240,20 +259,30 @@ void draw()
   }
 }
 
-void keyPressed()
-{
-  if (key == CODED)
-  {
-    switch(keyCode)
-    {
+void keyPressed(){
+  // Groundhog Move Lock
+  if(down > 0 || left > 0 || right > 0){
+    return;
+  }
+  if (key == CODED){
+    switch(keyCode){
       case DOWN:
-        downPressed = true;
+        if(groundhogY < 400){
+          downPressed = true;
+          down = 15;
+        }
         break;
       case LEFT:
-        leftPressed = true;
+        if(groundhogX > 0){
+          leftPressed = true;
+          left = 15;
+        }
         break;
       case RIGHT:
-        rightPressed= true;
+        if(groundhogX < 560){
+          rightPressed = true;
+          right = 15;
+        }
         break;
     }
   }
